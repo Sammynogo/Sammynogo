@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sammynogo's Homepage</title>
+    <title>My Notes</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -34,7 +34,6 @@
         }
         main {
             padding: 20px;
-            text-align: center;
         }
         footer {
             background-color: #333;
@@ -45,27 +44,75 @@
             bottom: 0;
             width: 100%;
         }
+        .note {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .note h3 {
+            margin: 0 0 10px;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to My Website</h1>
-        <p>Your go-to place for amazing content.</p>
+        <h1>My Notes</h1>
+        <p>Write, save, and share your thoughts.</p>
     </header>
     <nav>
         <a href="#">Home</a>
-        <a href="#about">About</a>
-        <a href="#services">Services</a>
-        <a href="#contact">Contact</a>
+        <a href="#add-note">Add Note</a>
+        <a href="#notes">View Notes</a>
     </nav>
     <main>
-        <h2>About Us</h2>
-        <p>We provide the best services to help you achieve your goals. Our team of experts ensures top-notch solutions for your needs.</p>
-        <h2>Our Services</h2>
-        <p>Explore our wide range of services tailored to meet your requirements. Contact us for more information!</p>
+        <section id="add-note">
+            <h2>Add a New Note</h2>
+            <form id="note-form">
+                <label for="note-title">Title:</label><br>
+                <input type="text" id="note-title" name="note-title" required><br><br>
+                <label for="note-content">Content:</label><br>
+                <textarea id="note-content" name="note-content" rows="5" required></textarea><br><br>
+                <button type="submit">Save Note</button>
+            </form>
+        </section>
+
+        <section id="notes">
+            <h2>Your Notes</h2>
+            <div id="notes-container">
+                <!-- Notes will be displayed here -->
+            </div>
+        </section>
     </main>
     <footer>
-        <p>&copy; 2024 My Website. All rights reserved.</p>
+        <p>&copy; 2024 My Notes. All rights reserved.</p>
     </footer>
+
+    <script>
+        const form = document.getElementById('note-form');
+        const notesContainer = document.getElementById('notes-container');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const title = document.getElementById('note-title').value;
+            const content = document.getElementById('note-content').value;
+
+            if (title && content) {
+                const note = document.createElement('div');
+                note.classList.add('note');
+                note.innerHTML = `
+                    <h3>${title}</h3>
+                    <p>${content}</p>
+                `;
+                notesContainer.appendChild(note);
+
+                // Clear the form
+                form.reset();
+            }
+        });
+    </script>
 </body>
 </html>
