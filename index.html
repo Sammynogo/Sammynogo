@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Notes</title>
+    <title>My Notes Manager</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -44,32 +44,59 @@
             bottom: 0;
             width: 100%;
         }
-        .note {
-            background: white;
+        .folder {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 5px;
-            padding: 10px;
-            margin: 10px 0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
         }
-        .note h3 {
-            margin: 0 0 10px;
+        .folder h3 {
+            margin: 0;
+        }
+        .note {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #e9ecef;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>My Notes</h1>
-        <p>Write, save, and share your thoughts.</p>
+        <h1>My Notes Manager</h1>
+        <p>Organize your notes by folders and create new files for each note.</p>
     </header>
     <nav>
         <a href="#">Home</a>
-        <a href="#add-note">Add Note</a>
-        <a href="#notes">View Notes</a>
+        <a href="#add-folder">Add Folder</a>
+        <a href="#folders">View Folders</a>
     </nav>
     <main>
-        <section id="add-note">
-            <h2>Add a New Note</h2>
+        <section id="add-folder">
+            <h2>Create a New Folder</h2>
+            <form id="folder-form">
+                <label for="folder-name">Folder Name:</label><br>
+                <input type="text" id="folder-name" name="folder-name" required><br><br>
+                <button type="submit">Create Folder</button>
+            </form>
+        </section>
+
+        <section id="folders">
+            <h2>Your Folders</h2>
+            <div id="folders-container">
+                <!-- Folders will be displayed here -->
+            </div>
+        </section>
+
+        <section id="add-note" class="hidden">
+            <h2>Add a Note to <span id="current-folder-name"></span></h2>
             <form id="note-form">
                 <label for="note-title">Title:</label><br>
                 <input type="text" id="note-title" name="note-title" required><br><br>
@@ -77,42 +104,123 @@
                 <textarea id="note-content" name="note-content" rows="5" required></textarea><br><br>
                 <button type="submit">Save Note</button>
             </form>
+            <button id="back-to-folders">Back to Folders</button>
         </section>
 
-        <section id="notes">
-            <h2>Your Notes</h2>
+        <section id="folder-notes" class="hidden">
+            <h2>Notes in <span id="folder-name-display"></span></h2>
             <div id="notes-container">
-                <!-- Notes will be displayed here -->
+                <!-- Notes for the selected folder will be displayed here -->
             </div>
+            <button id="add-new-note">Add New Note</button>
+            <button id="back">Back to Folders</button>
         </section>
     </main>
     <footer>
-        <p>&copy; 2024 My Notes. All rights reserved.</p>
+        <p>&copy; 2024 My Notes Manager. All rights reserved.</p>
     </footer>
 
     <script>
-        const form = document.getElementById('note-form');
+        const foldersContainer = document.getElementById('folders-container');
+        const folderForm = document.getElementById('folder-form');
+        const noteForm = document.getElementById('note-form');
         const notesContainer = document.getElementById('notes-container');
 
-        form.addEventListener('submit', function(e) {
+        const addNoteSection = document.getElementById('add-note');
+        const folderNotesSection = document.getElementById('folder-notes');
+        const addFolderSection = document.getElementById('add-folder');
+        const currentFolderName = document.getElementById('current-folder-name');
+        const folderNameDisplay = document.getElementById('folder-name-display');
+
+        let folders = {};
+        let currentFolder = null;
+
+        folderForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const folderName = document.getElementById('folder-name').value;
+
+            if (folderName && !folders[folderName]) {
+                folders[folderName] = [];
+                renderFolders();
+                folderForm.reset();
+            } else {
+                alert('Folder already exists or invalid name.');
+            }
+        });
+
+        function renderFolders() {
+            foldersContainer.innerHTML = '';
+
+            for (const folderName in folders) {
+                const folder = document.createElement('div');
+                folder.classList.add('folder');
+                folder.innerHTML = `<h3>${folderName}</h3>`;
+                folder.addEventListener('click', function() {
+                    openFolder(folderName);
+                });
+                foldersContainer.appendChild(folder);
+            }
+        }
+
+        function openFolder(folderName) {
+            currentFolder = folderName;
+            folderNameDisplay.textContent = folderName;
+            currentFolderName.textContent = folderName;
+            renderNotes(folderName);
+            toggleSections(folderNotesSection);
+        }
+
+        function renderNotes(folderName) {
+            notesContainer.innerHTML = '';
+            const notes = folders[folderName];
+
+            notes.forEach((note, index) => {
+                const noteDiv = document.createElement('div');
+                noteDiv.classList.add('note');
+                noteDiv.innerHTML = `
+                    <h3>${note.title}</h3>
+                    <p>${note.content}</p>
+                `;
+                notesContainer.appendChild(noteDiv);
+            });
+        }
+
+        noteForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
             const title = document.getElementById('note-title').value;
             const content = document.getElementById('note-content').value;
 
-            if (title && content) {
-                const note = document.createElement('div');
-                note.classList.add('note');
-                note.innerHTML = `
-                    <h3>${title}</h3>
-                    <p>${content}</p>
-                `;
-                notesContainer.appendChild(note);
-
-                // Clear the form
-                form.reset();
+            if (title && content && currentFolder) {
+                folders[currentFolder].push({ title, content });
+                renderNotes(currentFolder);
+                noteForm.reset();
+                toggleSections(folderNotesSection);
             }
         });
+
+        document.getElementById('add-new-note').addEventListener('click', function() {
+            toggleSections(addNoteSection);
+        });
+
+        document.getElementById('back').addEventListener('click', function() {
+            toggleSections(addFolderSection);
+        });
+
+        document.getElementById('back-to-folders').addEventListener('click', function() {
+            toggleSections(folderNotesSection);
+        });
+
+        function toggleSections(sectionToShow) {
+            addNoteSection.classList.add('hidden');
+            folderNotesSection.classList.add('hidden');
+            addFolderSection.classList.add('hidden');
+
+            sectionToShow.classList.remove('hidden');
+        }
+
+        renderFolders();
     </script>
 </body>
 </html>
