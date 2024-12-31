@@ -3,150 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Notes Manager</title>
+    <title>Page with Header</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
-        }
         header {
-            background-color: #007BFF;
+            background-color: #060125;
             color: white;
-            padding: 20px 0;
+            padding: 10px 20px;
             text-align: center;
         }
-        nav {
-            background-color: #333;
-            overflow: hidden;
-        }
-        nav a {
-            color: white;
-            padding: 14px 20px;
-            text-decoration: none;
-            display: block;
-            float: left;
-        }
-        nav a:hover {
-            background-color: #575757;
-        }
-        main {
-            padding: 20px;
-        }
-        footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-        .folder {
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            cursor: pointer;
-        }
-        .folder h3 {
+        nav ul {
+            list-style: none;
+            padding: 0;
             margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: rgb(2, 0, 136);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav ul li a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
+    <!-- Header Section -->
     <header>
-        <h1>My Notes Manager</h1>
-        <p>Organize and access your notes through uploaded HTML files.</p>
+        <h1>Welcome to My Website</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
     </header>
-    <nav>
-        <a href="#">Home</a>
-        <a href="#folders">View Folders</a>
-    </nav>
+
+    <!-- Main Content -->
     <main>
-        <section id="folders">
-            <h2>Your Folders</h2>
-            <p>Click on a folder to view its notes:</p>
-            <div id="folders-container">
-                <!-- Folders will be displayed here -->
-            </div>
-        </section>
-
-        <section id="notes" class="hidden">
-            <h2>Notes in <span id="current-folder"></span></h2>
-            <div id="notes-container">
-                <!-- Notes will be displayed here -->
-            </div>
-            <button id="back">Back to Folders</button>
-        </section>
+        <h2>Page Content</h2>
+        <p>This is the content of the page. The header stays at the top.</p>
     </main>
-    <footer>
-        <p>&copy; 2024 My Notes Manager. All rights reserved.</p>
-    </footer>
-
-    <script>
-        const foldersContainer = document.getElementById('folders-container');
-        const notesContainer = document.getElementById('notes-container');
-        const currentFolderDisplay = document.getElementById('current-folder');
-        const notesSection = document.getElementById('notes');
-        const foldersSection = document.getElementById('folders');
-
-        const folderData = {
-            // Example folder structure: Replace with your real folder data
-            "Work": ["work_note1.html", "work_note2.html"],
-            "Personal": ["personal_note1.html", "personal_note2.html"],
-            "Projects": ["project1.html", "project2.html"]
-        };
-
-        function renderFolders() {
-            foldersContainer.innerHTML = '';
-
-            for (const folderName in folderData) {
-                const folderDiv = document.createElement('div');
-                folderDiv.classList.add('folder');
-                folderDiv.innerHTML = `<h3>${folderName}</h3>`;
-                folderDiv.addEventListener('click', function() {
-                    openFolder(folderName);
-                });
-                foldersContainer.appendChild(folderDiv);
-            }
-        }
-
-        function openFolder(folderName) {
-            currentFolderDisplay.textContent = folderName;
-            renderNotes(folderData[folderName]);
-            toggleSections(notesSection);
-        }
-
-        function renderNotes(noteFiles) {
-            notesContainer.innerHTML = '';
-
-            noteFiles.forEach(noteFile => {
-                const noteLink = document.createElement('a');
-                noteLink.href = noteFile;
-                noteLink.target = '_blank';
-                noteLink.classList.add('note');
-                noteLink.textContent = noteFile;
-                notesContainer.appendChild(noteLink);
-            });
-        }
-
-        document.getElementById('back').addEventListener('click', function() {
-            toggleSections(foldersSection);
-        });
-
-        function toggleSections(sectionToShow) {
-            foldersSection.classList.add('hidden');
-            notesSection.classList.add('hidden');
-
-            sectionToShow.classList.remove('hidden');
-        }
-
-        renderFolders();
-    </script>
 </body>
 </html>
